@@ -3,8 +3,8 @@
  DB_File.xs -- Perl 5 interface to Berkeley DB 
 
  written by Paul Marquess (pmarquess@bfsec.bt.co.uk)
- last modified 13th May 1998
- version 1.59
+ last modified 16th May 1998
+ version 1.60
 
  All comments/suggestions/problems are welcome
 
@@ -55,6 +55,7 @@
 		size is specified as 0, it does a strlen on the data.
 		This was ok for DB 1.x, but isn't for DB 2.x.
         1.59 -  No change to DB_File.xs
+        1.60 -  Some code tidy up
 
 
 
@@ -357,8 +358,8 @@ const DBT * key2 ;
     ENTER ;
     SAVETMPS;
 
-    PUSHMARK(sp) ;
-    EXTEND(sp,2) ;
+    PUSHMARK(SP) ;
+    EXTEND(SP,2) ;
     PUSHs(sv_2mortal(newSVpv(data1,key1->size)));
     PUSHs(sv_2mortal(newSVpv(data2,key2->size)));
     PUTBACK ;
@@ -404,8 +405,8 @@ const DBT * key2 ;
     ENTER ;
     SAVETMPS;
 
-    PUSHMARK(sp) ;
-    EXTEND(sp,2) ;
+    PUSHMARK(SP) ;
+    EXTEND(SP,2) ;
     PUSHs(sv_2mortal(newSVpv(data1,key1->size)));
     PUSHs(sv_2mortal(newSVpv(data2,key2->size)));
     PUTBACK ;
@@ -442,7 +443,7 @@ size_t size ;
     ENTER ;
     SAVETMPS;
 
-    PUSHMARK(sp) ;
+    PUSHMARK(SP) ;
 
     XPUSHs(sv_2mortal(newSVpv((char*)data,size)));
     PUTBACK ;
@@ -1170,8 +1171,7 @@ db_FETCH(db, key, flags=0)
 	    /* RETVAL = ((db->dbp)->get)(db->dbp, TXN &key, &value, flags) ; */
 	    RETVAL = db_get(db, key, value, flags) ;
 	    ST(0) = sv_newmortal();
-	    if (RETVAL == 0) 
-	        my_sv_setpvn(ST(0), value.data, value.size);
+	    OutputValue(ST(0), value)
 	}
 
 int
@@ -1198,13 +1198,7 @@ db_FIRSTKEY(db)
 	    CurrentDB = db ;
 	    RETVAL = do_SEQ(db, key, value, R_FIRST) ;
 	    ST(0) = sv_newmortal();
-	    if (RETVAL == 0)
-	    {
-	        if (db->type != DB_RECNO)
-	            my_sv_setpvn(ST(0), key.data, key.size);
-	        else
-	            sv_setiv(ST(0), (I32)*(I32*)key.data - 1);
-	    }
+	    OutputKey(ST(0), key) ;
 	}
 
 int
@@ -1220,13 +1214,7 @@ db_NEXTKEY(db, key)
 	    CurrentDB = db ;
 	    RETVAL = do_SEQ(db, key, value, R_NEXT) ;
 	    ST(0) = sv_newmortal();
-	    if (RETVAL == 0)
-	    {
-	        if (db->type != DB_RECNO)
-	            my_sv_setpvn(ST(0), key.data, key.size);
-	        else
-	            sv_setiv(ST(0), (I32)*(I32*)key.data - 1);
-	    }
+	    OutputKey(ST(0), key) ;
 	}
 
 #
@@ -1295,7 +1283,7 @@ pop(db)
 	    if (RETVAL == 0)
 	    {
 		/* the call to del will trash value, so take a copy now */
-	        my_sv_setpvn(ST(0), value.data, value.size);
+		OutputValue(ST(0), value) ;
 	        RETVAL = db_del(db, key, R_CURSOR) ;
 	        if (RETVAL != 0) 
 	            sv_setsv(ST(0), &sv_undef); 
@@ -1322,7 +1310,7 @@ shift(db)
 	    if (RETVAL == 0)
 	    {
 		/* the call to del will trash value, so take a copy now */
-	        my_sv_setpvn(ST(0), value.data, value.size);
+		OutputValue(ST(0), value) ;
 	        RETVAL = db_del(db, key, R_CURSOR) ;
 	        if (RETVAL != 0)
 	            sv_setsv (ST(0), &sv_undef) ;

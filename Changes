@@ -196,8 +196,10 @@
    Updated the license section.
 
    Berkeley DB 2.4.10 disallows zero length keys. Tests 32 & 42 in
-   db-btree.t and test 27 in db-hash.t
-
-   Some tests needed changed to work with Berkeley DB 2.4.10
+   db-btree.t and test 27 in db-hash.t failed because of this change.
+   Those tests have been zapped.
 
    Added dbinfo to the distribution.
+
+1.60
+   Changed the test to check for full tied array support
