@@ -496,6 +496,7 @@ ok(90, $i == 10);
 # check it is empty
 $i = 0 ;
 while (($key,$value) = each(%h)) {
+	print "key=[$key] value=[$value]\n";
     $i++;
 }
 ok(91, $i == 0);
