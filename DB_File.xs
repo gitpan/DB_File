@@ -3,8 +3,8 @@
  DB_File.xs -- Perl 5 interface to Berkeley DB 
 
  written by Paul Marquess (pmarquess@bfsec.bt.co.uk)
- last modified 13th May 1997
- version 1.52
+ last modified 9th Sept 1997
+ version 1.53
 
  All comments/suggestions/problems are welcome
 
@@ -46,11 +46,14 @@
 	1.51 -  Fixed a bug in mapping 1.x O_RDONLY flag to 2.x DB_RDONLY equivalent
 	1.52 -  Patch from Gisle Aas <gisle@aas.no> to suppress "use of 
 		undefined value" warning with db_get and db_seq.
+	1.53 -  Added DB_RENUMBER to flags for recno.
 
 
 */
 
+#ifndef WIN32
 #include <db.h>
+#endif
 
 /* 
  * db.h can define the ENTER macro, so get rid of it before loading
@@ -66,6 +69,9 @@
 #include "perl.h"
 #include "XSUB.h"
 
+#ifdef WIN32
+#include <db.h>
+#endif
 
 #include <fcntl.h> 
 
@@ -756,6 +762,10 @@ SV *   sv ;
                     info->db_RE_bval = (u_char) '\n' ;
 		DB_flags(info->flags, DB_DELIMITER) ;
 	    }
+#endif
+
+#ifdef DB_RENUMBER
+	    info->flags |= DB_RENUMBER ;
 #endif
          
             PrintRecno(info) ;

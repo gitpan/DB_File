@@ -137,6 +137,9 @@
     DB_File creats objects in the namespace of the package it has been
     inherited into.
 
+
+1.16
+
 1.50
 
     DB_File can now build with either DB 1.x or 2.x, but not both at
@@ -155,3 +158,5 @@
    Patch from Nick Ing-Simmons now allows DB_File to build on NT.
    Merged 1.15 patch.
 
+1.53
+   Added DB_RENUMBER to flags for recno.

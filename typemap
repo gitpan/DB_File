@@ -1,8 +1,8 @@
 # typemap for Perl 5 interface to Berkeley 
 #
 # written by Paul Marquess (pmarquess@bfsec.bt.co.uk)
-# last modified 30th Jun 1997
-# version 1.52
+# last modified 9th Sept 1997
+# version 1.53
 #
 #################################### DB SECTION
 #
