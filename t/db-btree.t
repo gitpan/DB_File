@@ -1,20 +1,11 @@
 #!./perl -w
 
 BEGIN {
-    unless(grep /blib/, @INC) {
-        chdir 't' if -d 't';
-        @INC = '../lib' if -d '../lib';
-    }
-}
- 
-use Config;
- 
-BEGIN {
-    if(-d "lib" && -f "TEST") {
-        if ($Config{'extensions'} !~ /\bDB_File\b/ ) {
-            print "1..0\n";
-            exit 0;
-        }
+    @INC = '../lib' if -d '../lib' ;
+    require Config; import Config;
+    if ($Config{'extensions'} !~ /\bDB_File\b/) {
+	print "1..0\n";
+	exit 0;
     }
 }
 
@@ -100,7 +91,7 @@ ok(19, $X = tie(%h, 'DB_File',$Dfile, O_RDWR|O_CREAT, 0640, $DB_BTREE )) ;
 
 ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,$atime,$mtime,$ctime,
    $blksize,$blocks) = stat($Dfile);
-ok(20, ($mode & 0777) == ($^O eq 'os2' ? 0666 : 0640) || $^O eq 'amigaos' || $^O eq 'MSWin32');
+ok(20, ($mode & 0777) == (($^O eq 'os2' || $^O eq 'MSWin32') ? 0666 : 0640) || $^O eq 'amigaos');
 
 while (($key,$value) = each(%h)) {
     $i++;
@@ -317,8 +308,7 @@ ok(62, $status == 0 );
 ok(63, $key eq 'replace key' );
 ok(64, $value eq 'replace value' );
 $status = $X->get('y', $value) ;
-ok(65, 1) ; # hard-wire to always pass. the previous test ($status == 1)
-	    # only worked because of a bug in 1.85/6
+ok(65, $status == 1 );
 
 # use seq to walk forwards through a file 
 
@@ -523,6 +513,7 @@ unlink $Dfile1 ;
     unlink $filename ;
 }
 
+
 {
    # sub-class test
 
@@ -582,7 +573,7 @@ EOM
 
     close FILE ;
 
-    BEGIN { push @INC, '.'; }    
+    BEGIN { push @INC, '.'; }
     eval 'use SubDB ; ';
     main::ok(93, $@ eq "") ;
     my %h ;

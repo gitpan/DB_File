@@ -1,20 +1,11 @@
 #!./perl -w
 
 BEGIN {
-    unless(grep /blib/, @INC) {
-        chdir 't' if -d 't';
-        @INC = '../lib' if -d '../lib';
-    }
-}
- 
-use Config;
- 
-BEGIN {
-    if(-d "lib" && -f "TEST") {
-        if ($Config{'extensions'} !~ /\bDB_File\b/ ) {
-            print "1..0\n";
-            exit 0;
-        }
+    @INC = '../lib' if -d '../lib' ;
+    require Config; import Config;
+    if ($Config{'extensions'} !~ /\bDB_File\b/) {
+	print "1..0\n";
+	exit 0;
     }
 }
 
@@ -102,8 +93,8 @@ my $X  ;
 my @h ;
 ok(17, $X = tie @h, 'DB_File', $Dfile, O_RDWR|O_CREAT, 0640, $DB_RECNO ) ;
 
-ok(18, ((stat($Dfile))[2] & 0777) == ($^O eq 'os2' ? 0666 : 0640)
-	||  $^O eq 'MSWin32' || $^O eq 'amigaos') ;
+ok(18, ((stat($Dfile))[2] & 0777) == (($^O eq 'os2' || $^O eq 'MSWin32') ? 0666 : 0640)
+	|| $^O eq 'amigaos') ;
 
 #my $l = @h ;
 my $l = $X->length ;
@@ -359,7 +350,7 @@ EOM
 
     close FILE ;
 
-    BEGIN { push @INC, '.'; } 
+    BEGIN { push @INC, '.'; }   
     eval 'use SubDB ; ';
     main::ok(57, $@ eq "") ;
     my @h ;

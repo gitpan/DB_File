@@ -6,22 +6,8 @@ use Config ;
 my $VER_INFO ;
 my $LIB_DIR ;
 my $INC_DIR ;
-my $DB_NAME ;
-my $LIBS ;
 
 ParseCONFIG() ;
-
-if (defined $DB_NAME)
-  { $LIBS = $DB_NAME }
-else {
-    if ($^O eq 'MSWin32')
-      { $LIBS = '-llibdb' }
-    else
-      { $LIBS = '-ldb' }
-}
-
-# Solaris is special.
-$LIBS .= " -lthread" if $^O eq 'solaris' ;
 
 # OS2 is a special case, so check for it now.
 my $OS2 = "" ;
@@ -29,7 +15,7 @@ $OS2 = "-DOS2" if $Config{'osname'} eq 'os2' ;
 
 WriteMakefile(
 	NAME 		=> 'DB_File',
-	LIBS 		=> ["-L${LIB_DIR} $LIBS"],
+	LIBS 		=> ["-L${LIB_DIR} -ldb"],
         MAN3PODS        => ' ',         # Pods will be built by installman.
 	INC		=> "-I$INC_DIR",
 	VERSION_FROM	=> 'DB_File.pm',
@@ -45,27 +31,22 @@ sub MY::postamble {
 $(NAME).xs:	typemap
 	@$(TOUCH) $(NAME).xs
 
-Makefile:	config.in
+Makefile.PL:	config.in
 
 ' ;
 }
-
 
 sub ParseCONFIG
 {
     my ($k, $v) ;
     my @badkey = () ;
     my %Info = () ;
-    my @Options = qw( INCLUDE LIB PREFIX HASH DBNAME ) ;
+    my @Options = qw( INCLUDE LIB PREFIX HASH ) ;
     my %ValidOption = map {$_, 1} @Options ;
     my %Parsed = %ValidOption ;
     my $CONFIG = 'config.in' ;
 
     print "Parsing $CONFIG...\n" ;
-
-    # DBNAME is optional, so pretend it has been parsed.
-    delete $Parsed{'DBNAME'} ;
-
 
     open(F, "$CONFIG") or die "Cannot open file $CONFIG: $!\n" ;
     while (<F>) {
@@ -95,7 +76,6 @@ sub ParseCONFIG
 
     $INC_DIR = $Info{'INCLUDE'} ;
     $LIB_DIR = $Info{'LIB'} ;
-    $DB_NAME = $Info{'DBNAME'} if defined $Info{'DBNAME'} ;
     my $PREFIX  = $Info{'PREFIX'} ;
     my $HASH    = $Info{'HASH'} ;
 
@@ -106,7 +86,6 @@ sub ParseCONFIG
     LIB		[$LIB_DIR]
     HASH	[$HASH]
     PREFIX	[$PREFIX]
-    DBNAME      [$DB_NAME]
 
 EOM
 

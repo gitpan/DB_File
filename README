@@ -1,20 +1,21 @@
                                      DB_File
 
-                                  Version 1.55
+                                  Version 1.16
 
-                                  20th Nov 1997 
+                                 20th Nov 1997 
 
-	Copyright (c) 1995/6/7 Paul Marquess. All rights reserved. This
-	program is free software; you can redistribute it and/or modify
-	it under the same terms as Perl itself.
+        Copyright (c) 1995/6/7 Paul Marquess. All rights reserved. This
+        program is free software; you can redistribute it and/or modify
+        it under the same terms as Perl itself.
+
 
 
 DESCRIPTION
 -----------
 
 DB_File is a module which allows Perl programs to make use of the
-facilities provided by Berkeley DB version 1. (DB_File can be built
-version 2 of Berkeley DB, but it will only support the 1.x features),
+facilities provided by Berkeley DB version 1. This release does NOT
+support Berkeley DB version 2 (or greater).
 
 If you want to make use of the new features available in Berkeley DB
 2.x, use the Perl module BerkeleyDB instead.
@@ -24,8 +25,8 @@ number of database formats. DB_File provides an interface to all three
 of the database types (hash, btree and recno) currently supported by
 Berkeley DB.
 
-For further details see the documentation included at the end of the
-file DB_File.pm.
+For further details see the pod documentation embedded in the file
+DB_File.pm.
 
 PREREQUISITES
 -------------
@@ -33,22 +34,20 @@ PREREQUISITES
 Before you can build DB_File you need to have the following installed
 on your system:
 
-    * Perl 5.004 or greater. 
+    * Perl 5.003 or greater. 
 
     * Berkeley DB. 
 
-      For version 1 of Berkeley DB either 1.85 or 1.86 are best.
-      For version 2 of Berkeley DB you must have 2.0.5 or greater.
-
+      Berkeley DB either 1.85 or 1.86 are best.
+ 
       The official web site for Berkeley DB is
       http://www.sleepycat.com/db. The ftp equivalent is
-      ftp.sleepycat.com:/pub. Both versions 1 and 2 of Berkeley DB are
-      available there.
-
+      ftp.sleepycat.com:/pub. 
+ 
       Alternatively, Berkeley DB version 1 is available at your nearest
       CPAN archive (see the section on CPAN in the perlmod manpage for
       a list) in src/misc/db.1.85.tar.gz
-
+ 
       If you are running IRIX, then get Berkeley DB version 1 from
       http://reality.sgi.com/ariel. It has the patches necessary to
       compile properly on IRIX 5.3.
@@ -70,18 +69,12 @@ commands:
     make
     make test
 
-
-  NOTE:
-      If you have a very old version of Berkeley DB, three of the tests
-      in the recno test hasness may fail (tests 51, 53 and 55). You can
-      safely ignore the errors if you're never going to use the broken
-      functionality (recno databases with a modified bval).
-      Otherwise you'll have to upgrade your DB library.
-
 INSTALLATION
 ------------
 
     make install
+
+
 
 FEEDBACK
 --------
@@ -90,7 +83,7 @@ How to report a problem with DB_File.
 
 To help me help you, I need of the following information:
 
- 1. The version of Perl and the operating system name and version you
+ 1. the version of Perl and the operating system name and version you
     are running. If you are running a newish version of Perl, the
     output from running "perl -V" will tell me all I need to know. 
     If your perl doesn't understand the -V flag, then not only do you
@@ -100,19 +93,19 @@ To help me help you, I need of the following information:
 
  2. The version of DB_File you have. If you have successfully installed
     DB_File, this one-liner will tell you:
-
+ 
        perl -e 'use DB_File; print "DB_File ver $DB_File::VERSION\n"'
-
+ 
     If you haven't installed DB_File then search DB_File for a line
     like this:
-
-      $VERSION = "1.20" ;
-
+ 
+      $VERSION = "1.16" ;
+ 
  3. The version of Berkeley DB you have installed. The most recent
-    recommended versions are 1.85, 1.86 and 2.0.5. Again, if you have
-    an older version, think about upgrading. One point to note if you
-    are considering upgrading Berkeley DB - the file formats for 1.85,
-    1.86 and 2.0 are all different.
+    recommended versions are 1.85 and 1.86. Again, if you have an older
+    version, think about upgrading. One point to note if you are
+    considering upgrading Berkeley DB - the file formats for 1.85, and
+    1.86 are different.
 
  4. If you are having problems building DB_File, send me a complete log
     of what happened.
@@ -126,7 +119,7 @@ To help me help you, I need of the following information:
     reproduce your problem on my system. If possible, don't have the
     script dependent on an existing 20Meg database. If the script you
     send me can create the database itself then that is preferred.
-
+ 
     I realise that in some cases this is easier said than done, so if
     you can only reproduce the problem in your existing script, then
     you can post me that if you want. Just don't expect me to find your
@@ -136,6 +129,7 @@ To help me help you, I need of the following information:
 CHANGES
 -------
 
-See the Changes file.
+See the HISTORY section in DB_File.pm
  
 Paul Marquess <pmarquess@bfsec.bt.co.uk>
+

@@ -1,20 +1,11 @@
 #!./perl -w
 
 BEGIN {
-    unless(grep /blib/, @INC) {
-        chdir 't' if -d 't';
-        @INC = '../lib' if -d '../lib';
-    }
-}
- 
-use Config;
- 
-BEGIN {
-    if(-d "lib" && -f "TEST") {
-        if ($Config{'extensions'} !~ /\bDB_File\b/ ) {
-            print "1..0\n";
-            exit 0;
-        }
+    @INC = '../lib' if -d '../lib' ;
+    require Config; import Config;
+    if ($Config{'extensions'} !~ /\bDB_File\b/) {
+	print "1..0\n";
+	exit 0;
     }
 }
 
@@ -79,7 +70,7 @@ ok(15, $X = tie(%h, 'DB_File',$Dfile, O_RDWR|O_CREAT, 0640, $DB_HASH ) );
 
 ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,$atime,$mtime,$ctime,
    $blksize,$blocks) = stat($Dfile);
-ok(16, ($mode & 0777) == ($^O eq 'os2' ? 0666 : 0640) || $^O eq 'amigaos' || $^O eq 'MSWin32');
+ok(16, ($mode & 0777) == (($^O eq 'os2' || $^O eq 'MSWin32') ? 0666 : 0640) || $^O eq 'amigaos');
 
 while (($key,$value) = each(%h)) {
     $i++;
@@ -388,7 +379,7 @@ EOM
 
     close FILE ;
 
-    BEGIN { push @INC, '.'; }             
+    BEGIN { push @INC, '.'; }
     eval 'use SubDB ; ';
     main::ok(53, $@ eq "") ;
     my %h ;
@@ -419,4 +410,5 @@ EOM
     unlink "SubDB.pm", "dbhash.tmp" ;
 
 }
+
 exit ;
