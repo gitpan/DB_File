@@ -3,8 +3,8 @@
  DB_File.xs -- Perl 5 interface to Berkeley DB 
 
  written by Paul Marquess (pmarquess@bfsec.bt.co.uk)
- last modified 7th May 1997
- version 1.50
+ last modified 13th May 1997
+ version 1.51
 
  All comments/suggestions/problems are welcome
 
@@ -43,6 +43,7 @@
 	1.14 -	Made it illegal to tie an associative array to a RECNO
 		database and an ordinary array to a HASH or BTREE database.
 	1.50 -  Make work with both DB 1.x or DB 2.x
+	1.51 -  Fixed a bug in mapping 1.x O_RDONLY flag to 2.x DB_RDONLY equivalent
 
 */
 
@@ -775,16 +776,20 @@ SV *   sv ;
         int		status ;
 
         /* Map 1.x flags to 2.x flags */
-        if (flags & O_CREAT)
+        if ((flags & O_CREAT) == O_CREAT)
             Flags |= DB_CREATE ;
 
-        if (flags & O_NONBLOCK)
+        if ((flags & O_NONBLOCK) == O_NONBLOCK)
             Flags |= DB_EXCL ;
 
-        if (flags & O_RDONLY)
+#if O_RDONLY == 0
+        if (flags == O_RDONLY)
+#else
+        if (flags & O_RDONLY) == O_RDONLY)
+#endif
             Flags |= DB_RDONLY ;
 
-        if (flags & O_TRUNC)
+        if ((flags & O_TRUNC) == O_TRUNC)
             Flags |= DB_TRUNCATE ;
 
         status = db_open(name, RETVAL->type, Flags, mode, NULL, openinfo, &RETVAL->dbp) ; 

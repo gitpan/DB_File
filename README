@@ -1,8 +1,8 @@
                                      DB_File
 
-                                  Version 1.50
+                                  Version 1.51
 
-                                  7th May 1997 
+                                  13th May 1997 
 
 	Copyright (c) 1995/6/7 Paul Marquess. All rights reserved. This
 	program is free software; you can redistribute it and/or modify
@@ -143,7 +143,7 @@ To help me help you, I need of the following information:
 CHANGES
 -------
 
-See the HISTORY section in DB_File.pm
+See the Changes file.
  
 Paul Marquess <pmarquess@bfsec.bt.co.uk>
 

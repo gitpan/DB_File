@@ -1,11 +1,20 @@
 #!./perl -w
 
 BEGIN {
-    @INC = '../lib' if -d '../lib' ;
-    require Config; import Config;
-    if ($Config{'extensions'} !~ /\bDB_File\b/) {
-	print "1..0\n";
-	exit 0;
+    unless(grep /blib/, @INC) {
+        chdir 't' if -d 't';
+        @INC = '../lib' if -d '../lib';
+    }
+}
+ 
+use Config;
+ 
+BEGIN {
+    if(-d "lib" && -f "TEST") {
+        if ($Config{'extensions'} !~ /\bDB_File\b/ ) {
+            print "1..0\n";
+            exit 0;
+        }
     }
 }
 
@@ -496,7 +505,6 @@ ok(90, $i == 10);
 # check it is empty
 $i = 0 ;
 while (($key,$value) = each(%h)) {
-	print "key=[$key] value=[$value]\n";
     $i++;
 }
 ok(91, $i == 0);

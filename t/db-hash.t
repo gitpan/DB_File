@@ -1,11 +1,20 @@
 #!./perl -w
 
 BEGIN {
-    @INC = '../lib' if -d '../lib' ;
-    require Config; import Config;
-    if ($Config{'extensions'} !~ /\bDB_File\b/) {
-	print "1..0\n";
-	exit 0;
+    unless(grep /blib/, @INC) {
+        chdir 't' if -d 't';
+        @INC = '../lib' if -d '../lib';
+    }
+}
+ 
+use Config;
+ 
+BEGIN {
+    if(-d "lib" && -f "TEST") {
+        if ($Config{'extensions'} !~ /\bDB_File\b/ ) {
+            print "1..0\n";
+            exit 0;
+        }
     }
 }
 

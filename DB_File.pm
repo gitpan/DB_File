@@ -1,8 +1,8 @@
 # DB_File.pm -- Perl 5 interface to Berkeley DB 
 #
 # written by Paul Marquess (pmarquess@bfsec.bt.co.uk)
-# last modified 7th May 1997
-# version 1.50
+# last modified 13th May 1997
+# version 1.51
 #
 #     Copyright (c) 1995, 1996, 1997 Paul Marquess. All rights reserved.
 #     This program is free software; you can redistribute it and/or
@@ -146,7 +146,7 @@ use vars qw($VERSION @ISA @EXPORT $AUTOLOAD $DB_BTREE $DB_HASH $DB_RECNO $db_ver
 use Carp;
 
 
-$VERSION = "1.50" ;
+$VERSION = "1.51" ;
 
 #typedef enum { DB_BTREE, DB_HASH, DB_RECNO } DBTYPE;
 $DB_BTREE = new DB_File::BTREEINFO ;
@@ -1713,6 +1713,11 @@ ordinary array to a HASH or BTREE database.
 
 DB_File can now build with either DB 1.x or 2.x, but not both at the
 same time.
+
+=item 1.51
+
+Fixed the test harness so that it doesn't expect DB_File to have been
+installed by the main Perl build.
 
 =back
 
