@@ -1,0 +1,131 @@
+LIBRARY     LIBDB.DLL
+
+EXPORTS
+    __db_fdopen                    @202 
+    __db_loadme                    @201 
+    __db_mutex_init                @208 
+    __db_mutex_lock                @211 
+    __db_mutex_unlock              @207 
+    __db_rclose                    @205 
+    __db_rcreate                   @209 
+    __db_ropen                     @206 
+    __db_runlink                   @210 
+    __ham_func2                    @214 
+    __ham_func3                    @215 
+    __ham_func4                    @216 
+    __ham_func5                    @217 
+    db_appexit                     @48  
+    db_appinit                     @50  
+    db_open                        @2   
+    db_version                     @49  
+    dbm_close                      @40  
+    dbm_delete                     @41  
+    dbm_fetch                      @42  
+    dbm_firstkey                   @43  
+    dbm_nextkey                    @45  
+    dbm_open                       @46  
+    dbm_store                      @47  
+    lock_close                     @3   
+    lock_detect                    @53  
+    lock_get                       @4   
+    lock_id                        @5   
+    lock_open                      @6   
+    lock_put                       @7   
+    lock_unlink                    @8   
+    lock_vec                       @9   
+    log_archive                    @52  
+    log_close                      @10  
+    log_compare                    @11  
+    log_file                       @12  
+    log_flush                      @13  
+    log_get                        @14  
+    log_open                       @15  
+    log_put                        @16  
+    log_register                   @17  
+    log_unlink                     @19  
+    log_unregister                 @20  
+    memp_close                     @21  
+    memp_fclose                    @22  
+    memp_fget                      @23  
+    memp_fopen                     @24  
+    memp_fput                      @25  
+    memp_fset                      @26  
+    memp_fsync                     @27  
+    memp_open                      @28  
+    memp_register                  @29  
+    memp_stat                      @51  
+    memp_sync                      @30  
+    memp_unlink                    @31  
+    txn_abort                      @32  
+    txn_begin                      @33  
+    txn_checkpoint                 @34  
+    txn_close                      @36  
+    txn_commit                     @35  
+    txn_id                         @54  
+    txn_open                       @37  
+    txn_prepare                    @38  
+    txn_unlink                     @39  
+    ___db_fdopen = __db_fdopen 
+    ___db_loadme = __db_loadme 
+    ___db_mutex_init = __db_mutex_init 
+    ___db_mutex_lock = __db_mutex_lock 
+    ___db_mutex_unlock = __db_mutex_unlock 
+    ___db_rclose = __db_rclose 
+    ___db_rcreate = __db_rcreate 
+    ___db_ropen = __db_ropen 
+    ___db_runlink = __db_runlink 
+    ___ham_func2 = __ham_func2 
+    ___ham_func3 = __ham_func3 
+    ___ham_func4 = __ham_func4 
+    ___ham_func5 = __ham_func5 
+    _db_appexit = db_appexit  
+    _db_appinit = db_appinit  
+    _db_open = db_open   
+    _db_version = db_version  
+    _dbm_close = dbm_close  
+    _dbm_delete = dbm_delete  
+    _dbm_fetch = dbm_fetch  
+    _dbm_firstkey = dbm_firstkey  
+    _dbm_nextkey = dbm_nextkey  
+    _dbm_open = dbm_open  
+    _dbm_store = dbm_store  
+    _lock_close = lock_close   
+    _lock_detect = lock_detect  
+    _lock_get = lock_get   
+    _lock_id = lock_id   
+    _lock_open = lock_open   
+    _lock_put = lock_put   
+    _lock_unlink = lock_unlink   
+    _lock_vec = lock_vec   
+    _log_archive = log_archive  
+    _log_close = log_close  
+    _log_compare = log_compare  
+    _log_file = log_file  
+    _log_flush = log_flush  
+    _log_get = log_get  
+    _log_open = log_open  
+    _log_put = log_put  
+    _log_register = log_register  
+    _log_unlink = log_unlink  
+    _log_unregister = log_unregister  
+    _memp_close = memp_close  
+    _memp_fclose = memp_fclose  
+    _memp_fget = memp_fget  
+    _memp_fopen = memp_fopen  
+    _memp_fput = memp_fput  
+    _memp_fset = memp_fset  
+    _memp_fsync = memp_fsync  
+    _memp_open = memp_open  
+    _memp_register = memp_register  
+    _memp_stat = memp_stat  
+    _memp_sync = memp_sync  
+    _memp_unlink = memp_unlink  
+    _txn_abort = txn_abort  
+    _txn_begin = txn_begin  
+    _txn_checkpoint = txn_checkpoint  
+    _txn_close = txn_close  
+    _txn_commit = txn_commit  
+    _txn_id = txn_id  
+    _txn_open = txn_open  
+    _txn_prepare = txn_prepare  
+    _txn_unlink = txn_unlink  
