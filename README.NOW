@@ -1,0 +1,18 @@
+This contains DB_File-1.54 binaries for the Intel/Win32 platform,
+for use with the perl binary distribution at:
+
+http://www.perl.com/CPAN/authors/id/GSAR/perl5.00402-bindist04-bc.tar.gz
+
+1. Install the above perl distribution first, and add the perl binary
+   directory to your PATH.
+   
+2. Run the install.bat found in here to install DB_File itself.
+
+3. You can run the t\*.t files individually after you install
+   to make sure it got installed properly.
+
+Enjoy!
+
+Gurusamy Sarathy
+gsar@umich.edu
+19-OCT-1997
