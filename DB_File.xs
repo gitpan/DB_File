@@ -3,8 +3,8 @@
  DB_File.xs -- Perl 5 interface to Berkeley DB 
 
  written by Paul Marquess <Paul.Marquess@btinternet.com>
- last modified 6th March 1999
- version 1.65
+ last modified 6th June 1999
+ version 1.67
 
  All comments/suggestions/problems are welcome
 
@@ -65,6 +65,10 @@
 		to fix a flag mapping problem with O_RDONLY on the Hurd
         1.65 -  Fixed a bug in the PUSH logic.
 		Added BOOT check that using 2.3.4 or greater
+        1.66 -  Added DBM filter code
+        1.67 -  Backed off the use of newSVpvn.
+		Fixed DBM Filter code for Perl 5.004.
+		Fixed a small memory leak in the filter code.
 
 
 
@@ -88,6 +92,11 @@
 
 #endif
 
+/* DEFSV appears first in 5.004_56 */
+#ifndef DEFSV
+#define DEFSV		GvSV(defgv)
+#endif
+
 /* Being the Berkeley DB we prefer the <sys/cdefs.h> (which will be
  * shortly #included by the <db.h>) __attribute__ to the possibly
  * already defined __attribute__, for example by GNUC or by Perl. */
@@ -105,6 +114,7 @@
 #include <fcntl.h> 
 
 /* #define TRACE */
+#define DBM_FILTERING
 
 
 
@@ -277,28 +287,64 @@ typedef struct {
 #ifdef DB_VERSION_MAJOR
 	DBC *	cursor ;
 #endif
+#ifdef DBM_FILTERING
+	SV *    filter_fetch_key ;
+	SV *    filter_store_key ;
+	SV *    filter_fetch_value ;
+	SV *    filter_store_value ;
+	int     filtering ;
+#endif /* DBM_FILTERING */
+
 	} DB_File_type;
 
 typedef DB_File_type * DB_File ;
 typedef DBT DBTKEY ;
 
-#define my_sv_setpvn(sv, d, s) sv_setpvn(sv, (s ? d : (void*)""), s)
+#ifdef DBM_FILTERING
 
-#define OutputValue(arg, name)  				\
-	{ if (RETVAL == 0) {					\
-	      my_sv_setpvn(arg, name.data, name.size) ;		\
-	  }							\
+#define ckFilter(arg,type,name)					\
+	if (db->type) {						\
+	    SV * save_defsv ;					\
+            /* printf("filtering %s\n", name) ;*/		\
+	    if (db->filtering)					\
+	        croak("recursion detected in %s", name) ;	\
+	    db->filtering = TRUE ;				\
+	    save_defsv = newSVsv(DEFSV) ;			\
+	    sv_setsv(DEFSV, arg) ;				\
+	    PUSHMARK(sp) ;					\
+	    (void) perl_call_sv(db->type, G_DISCARD|G_NOARGS); 	\
+	    sv_setsv(arg, DEFSV) ;				\
+	    sv_setsv(DEFSV, save_defsv) ;			\
+	    SvREFCNT_dec(save_defsv) ;				\
+	    db->filtering = FALSE ;				\
+	    /*printf("end of filtering %s\n", name) ;*/		\
 	}
 
-#define OutputKey(arg, name)	 				\
-	{ if (RETVAL == 0) 					\
-	  { 							\
-		if (db->type != DB_RECNO) {			\
-		    my_sv_setpvn(arg, name.data, name.size); 	\
-		}						\
-		else 						\
-		    sv_setiv(arg, (I32)*(I32*)name.data - 1); 	\
-	  } 							\
+#else
+
+#define ckFilter(arg,type, name)
+
+#endif /* DBM_FILTERING */
+
+#define my_sv_setpvn(sv, d, s) sv_setpvn(sv, (s ? d : (void*)""), s)
+
+#define OutputValue(arg, name)  					\
+	{ if (RETVAL == 0) {						\
+	      my_sv_setpvn(arg, name.data, name.size) ;			\
+	      ckFilter(arg, filter_fetch_value,"filter_fetch_value") ; 	\
+	  }								\
+	}
+
+#define OutputKey(arg, name)	 					\
+	{ if (RETVAL == 0) 						\
+	  { 								\
+		if (db->type != DB_RECNO) {				\
+		    my_sv_setpvn(arg, name.data, name.size); 		\
+		}							\
+		else 							\
+		    sv_setiv(arg, (I32)*(I32*)name.data - 1); 		\
+	      ckFilter(arg, filter_fetch_key,"filter_fetch_key") ; 	\
+	  } 								\
 	}
 
 
@@ -620,6 +666,11 @@ SV *   sv ;
     Zero(RETVAL, 1, DB_File_type) ;
 
     /* Default to HASH */
+#ifdef DBM_FILTERING
+    RETVAL->filtering = 0 ;
+    RETVAL->filter_fetch_key = RETVAL->filter_store_key = 
+    RETVAL->filter_fetch_value = RETVAL->filter_store_value =
+#endif /* DBM_FILTERING */
     RETVAL->hash = RETVAL->compare = RETVAL->prefix = NULL ;
     RETVAL->type = DB_HASH ;
 
@@ -1165,6 +1216,16 @@ db_DESTROY(db)
 	    SvREFCNT_dec(db->compare) ;
 	  if (db->prefix)
 	    SvREFCNT_dec(db->prefix) ;
+#ifdef DBM_FILTERING
+	  if (db->filter_fetch_key)
+	    SvREFCNT_dec(db->filter_fetch_key) ;
+	  if (db->filter_store_key)
+	    SvREFCNT_dec(db->filter_store_key) ;
+	  if (db->filter_fetch_value)
+	    SvREFCNT_dec(db->filter_fetch_value) ;
+	  if (db->filter_store_value)
+	    SvREFCNT_dec(db->filter_store_value) ;
+#endif /* DBM_FILTERING */
 	  Safefree(db) ;
 #ifdef DB_VERSION_MAJOR
 	  if (RETVAL > 0)
@@ -1532,3 +1593,56 @@ db_seq(db, key, value, flags)
 	  key
 	  value
 
+#ifdef DBM_FILTERING
+
+#define setFilter(type)					\
+	{						\
+	    if (db->type)				\
+	        RETVAL = sv_mortalcopy(db->type) ;	\
+	    ST(0) = RETVAL ;				\
+	    if (db->type && (code == &PL_sv_undef)) {	\
+                SvREFCNT_dec(db->type) ;		\
+	        db->type = NULL ;			\
+	    }						\
+	    else if (code) {				\
+	        if (db->type)				\
+	            sv_setsv(db->type, code) ;		\
+	        else					\
+	            db->type = newSVsv(code) ;		\
+	    }	    					\
+	}
+
+
+SV *
+filter_fetch_key(db, code)
+	DB_File		db
+	SV *		code
+	SV *		RETVAL = &PL_sv_undef ;
+	CODE:
+	    setFilter(filter_fetch_key) ;
+
+SV *
+filter_store_key(db, code)
+	DB_File		db
+	SV *		code
+	SV *		RETVAL = &PL_sv_undef ;
+	CODE:
+	    setFilter(filter_store_key) ;
+
+SV *
+filter_fetch_value(db, code)
+	DB_File		db
+	SV *		code
+	SV *		RETVAL = &PL_sv_undef ;
+	CODE:
+	    setFilter(filter_fetch_value) ;
+
+SV *
+filter_store_value(db, code)
+	DB_File		db
+	SV *		code
+	SV *		RETVAL = &PL_sv_undef ;
+	CODE:
+	    setFilter(filter_store_value) ;
+
+#endif /* DBM_FILTERING */

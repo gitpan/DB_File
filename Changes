@@ -233,3 +233,16 @@
 
    * Fixed a bug in the recno PUSH logic.
    * The BOOT version check now needs 2.3.4 when using Berkeley DB version 2
+
+1.66 15th March 1999
+
+   * Added DBM Filter code
+
+1.67 6th June 1999
+
+   * Added DBM Filter documentation to DB_File.pm
+
+   * Fixed DBM Filter code to work with 5.004
+
+   * A few instances of newSVpvn were used in 1.66. This isn't available in
+     Perl 5.004_04 or earlier. Replaced with newSVpv.
