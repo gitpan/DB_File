@@ -1,4 +1,9 @@
 
+1.831 15 November 2013
+
+   * C99 comment is a nogo
+     RT #90383
+
 1.830 2 November 2013
 
    * Memory leaks when failed to open db
