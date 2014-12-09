@@ -125,6 +125,8 @@
 #  include "ppport.h"
 #endif
 
+int DB_File___unused() { return 0; }
+
 /* Mention DB_VERSION_MAJOR_CFG, DB_VERSION_MINOR_CFG, and
    DB_VERSION_PATCH_CFG here so that Configure pulls them all in. */
 
@@ -171,7 +173,7 @@
 #    ifdef __cplusplus
 #        define dNOOP (void)0
 #    else
-#        define dNOOP extern int DB_File___notused
+#        define dNOOP extern int DB_File___notused()
 #    endif
 
     /* Ditto for dXSARGS. */
@@ -1546,9 +1548,11 @@ BOOT:
 #endif    
 #ifdef WANT_ERROR
     SV * sv_err = perl_get_sv(ERR_BUFF, GV_ADD|GV_ADDMULTI) ; 
-    PERL_UNUSED_VAR(sv_err); /* huh? we just retrieved it... */
 #endif
     MY_CXT_INIT;
+#ifdef WANT_ERROR
+    PERL_UNUSED_VAR(sv_err); /* huh? we just retrieved it... */
+#endif
     __getBerkeleyDBInfo() ;
  
     DBT_clear(empty) ; 

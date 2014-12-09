@@ -1,4 +1,11 @@
 
+1.833 9 Dec 2014
+
+   * More Silence compiler warnings
+
+   * 1.832 breaks bleadperl C89 build
+     RT #100812
+
 1.832 8 Dec 2014
 
    * Silence compiler warnings
