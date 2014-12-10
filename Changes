@@ -1,4 +1,9 @@
 
+1.834 11 Dec 2014
+
+   * Makefile.PL: version check is missing a zero
+     RT #100844
+
 1.833 9 Dec 2014
 
    * More Silence compiler warnings
