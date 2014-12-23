@@ -1,4 +1,8 @@
 
+1.835 23 Dec 2014
+
+   * Silence more compiler warnings
+
 1.834 11 Dec 2014
 
    * Makefile.PL: version check is missing a zero
